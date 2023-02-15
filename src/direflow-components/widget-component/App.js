@@ -44,7 +44,7 @@ const App = (props) => {
           setProjects([])
         }
       })
-      axios.get('http://localhost:9000/api/v1/users/48e40a9c-c5e9-4d63-9aba-b77cdf4ca67b')
+      axios.get('https://jobshot.app/api/v1/users/48e40a9c-c5e9-4d63-9aba-b77cdf4ca67b')
       .then(function (response) {
         if(response.data) {
           const temp = []
