@@ -3,6 +3,7 @@ import { Styled } from 'direflow-component';
 import { Select, CaretIcon, ModalCloseButton } from 'react-responsive-select';
 import EllipsisText from "react-ellipsis-text"
 import axios from 'axios'
+import Pagination from 'rc-pagination'
 import styles from './App.css';
 import 'react-responsive-select/dist/react-responsive-select.css'
 
@@ -44,7 +45,7 @@ const App = (props) => {
           setProjects([])
         }
       })
-      axios.get('https://jobshot.app/api/v1/users/48e40a9c-c5e9-4d63-9aba-b77cdf4ca67b')
+      axios.get(`https://jobshot.app/api/v1/users/${props.dataId}`)
       .then(function (response) {
         if(response.data) {
           const temp = []
@@ -74,7 +75,6 @@ const App = (props) => {
       <div>
       <div className="s003">
         <form>
-          {console.log('selection', selection)}
           <div className="inner-form">
             {
               selection.length > 0 && 
@@ -128,6 +128,9 @@ const App = (props) => {
               })
             }
           </ul>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '4em' }}>
+          <Pagination defaultPageSize={10} />
         </div>
       </div>
     </Styled>
