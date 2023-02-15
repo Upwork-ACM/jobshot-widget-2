@@ -5,7 +5,7 @@ import styles from './App.css';
 const App = () => {
   useEffect(() => {
     const event = new Event('widget-component');
-    const component = document.querySelector('awesome-component');
+    const component = document.querySelector('widget-component');
     console.log('component', component)
     console.log("EVENT", event)
   }, [])
