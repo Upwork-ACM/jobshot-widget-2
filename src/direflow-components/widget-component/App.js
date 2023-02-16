@@ -4,16 +4,48 @@ import { Select, CaretIcon, ModalCloseButton } from 'react-responsive-select';
 import EllipsisText from "react-ellipsis-text"
 import axios from 'axios'
 import Pagination from 'rc-pagination'
+import Modal from 'react-modal';
+import Carousel from 'react-grid-carousel'
+import ImageViewer from 'awesome-image-viewer'
 import styles from './App.css';
 import 'react-responsive-select/dist/react-responsive-select.css'
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    width: '80%',
+    height: '70%',
+    transform: 'translate(-50%, -50%)',
+    fontFamily: 'Noto Sans JP'
+  },
+};
 
 const App = (props) => {
   
   const [projects, setProjects] = useState([])
   const [selection, setSelection] = useState([])
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [serviceType, setServiceType] = useState([])
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const [data, setData] = useState(null)
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
 
   useEffect(() => {
-    axios.get(`https://jobshot.app/api/v1/projects/${props.dataId}`)
+    axios.get(`http://localhost:9000/api/v1/projects/${props.dataId}?page=${page}&search=${search}&serviceType=${serviceType}`)
       .then(function (response) {
         // console.log(response);
         if(response && response.data) {
@@ -45,7 +77,7 @@ const App = (props) => {
           setProjects([])
         }
       })
-      axios.get(`https://jobshot.app/api/v1/users/${props.dataId}`)
+      axios.get(`http://localhost:9000/api/v1/users/${props.dataId}`)
       .then(function (response) {
         if(response.data) {
           const temp = []
@@ -67,12 +99,84 @@ const App = (props) => {
           setSelection(temp)
         }
       })
-  }, [props])
+  }, [props, page, search, serviceType])
 
 
   return (
     <Styled styles={styles}>
       <div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <h2 style={{ textAlign: 'center', fontWeight: 'bold' }}>{data?.title.toUpperCase()}</h2>
+        <h4 style={{ textAlign: 'center' }}>{data?.description}</h4>
+        <div style={{ textAlign: 'center' }}>
+          <button style={{ backgroundColor: 'white', borderColor: 'black', padding: '10px' }}>REQUEST QUOTE</button>
+        </div>
+        <div style={{ backgroundColor: 'black', width: '100%'}}>
+          <h4 style={{ color: 'white', paddingLeft: '20px', paddingTop: '10px', paddingBottom: '10px', fontWeight: 'bold' }}>BEFORE</h4>
+        </div>
+        {
+          data && data.project.length > 0 &&
+          <Carousel cols={5} style={{ width: '100%'}} rows={1} gap={5} loop>
+            {
+              data.beforeFiles.map((x, i) => {
+                return <Carousel.Item>
+                  <img alt={i} onClick={ async () => {
+                    new ImageViewer({
+                      images: data.beforeFiles,
+                      showThumbnails: false
+                    })
+                  }} width="200px" src={x.mainUrl} />
+                </Carousel.Item>
+              })
+            }
+          </Carousel>
+        }
+        <div style={{ backgroundColor: 'black', width: '100%'}}>
+          <h4 style={{ color: 'white', paddingLeft: '20px', paddingTop: '10px', paddingBottom: '10px', fontWeight: 'bold' }}>PROGRESS</h4>
+        </div>
+        {
+          data && data.project.length > 0 &&
+          <Carousel cols={5} style={{ width: '100%'}} rows={1} gap={5} loop>
+            {
+              data.progressFiles.map((x, i) => {
+                return <Carousel.Item>
+                  <img alt={i} onClick={ async () => {
+                    new ImageViewer({
+                      images: data.progressFiles,
+                      showThumbnails: false
+                    })
+                  }} width="200px" src={x.mainUrl} />
+                </Carousel.Item>
+              })
+            }
+          </Carousel>
+        }
+        <div style={{ backgroundColor: 'black', width: '100%'}}>
+          <h4 style={{ color: 'white', paddingLeft: '20px', paddingTop: '10px', paddingBottom: '10px', fontWeight: 'bold' }}>AFTER</h4>
+        </div>
+        {
+          data && data.project.length > 0 &&
+          <Carousel cols={5} style={{ width: '100%'}} rows={1} gap={5} loop>
+            {
+              data.afterFiles.map((x, i) => {
+                return <Carousel.Item>
+                  <img alt={i} onClick={ async () => {
+                    new ImageViewer({
+                      images: data.afterFiles,
+                      showThumbnails: false
+                    })
+                  }} width="200px" src={x.mainUrl} />
+                </Carousel.Item>
+              })
+            }
+          </Carousel>
+        }
+      </Modal>
       <div className="s003">
         <form>
           <div className="inner-form">
@@ -88,21 +192,23 @@ const App = (props) => {
                     style={{ border: 0 }}
                     options={selection}
                     caretIcon={<CaretIcon />}
-                    onChange={(...rest) => console.log(rest)}
-                    onSubmit={(a) => console.log('onSubmit', a)}
+                    onSelect={(a) => a.value === 'all' ? setServiceType([]) : setServiceType(oldArray => [...oldArray, a.value])}
+                    onDeselect={(a) => {
+                      const temp = []
+                      for(let i = 0; i < serviceType.length; i++) {
+                        if(serviceType[i] !== a.value) {
+                          temp.push(serviceType[i])
+                        }
+                      }
+                      setServiceType(temp)
+                    }}
                   />
                 </div>
               </div>
             }
+            {console.log(serviceType)}
             <div className="input-field second-wrap">
-              <input id="search" type="text" placeholder="Enter Keywords?" />
-            </div>
-            <div className="input-field third-wrap">
-              <button className="btn-search" type="button">
-                <svg className="svg-inline--fa fa-search fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                  <path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path>
-                </svg>
-              </button>
+              <input id="search" type="text" onChange={(a) => setSearch(a.target.value)} placeholder="Enter Keywords?" />
             </div>
           </div>
         </form>
@@ -112,7 +218,29 @@ const App = (props) => {
             {
               projects.map((x, i) => {
                 return (
-                  <li className="block" key={i}>
+                  <li className="block" key={i} onClick={() => {
+                    const beforeFiles = []
+                      const progressFiles = []
+                      const afterFiles = []
+                      for(let i = 0; i < x.project.length; i++) {
+                        if(x.project[i].type === 'before') {
+                          beforeFiles.push({mainUrl: x.project[i].file})
+                        }
+                        if(x.project[i].type === 'progress') {
+                          progressFiles.push({mainUrl: x.project[i].file})
+                        }
+                        if(x.project[i].type === 'after') {
+                          afterFiles.push({mainUrl: x.project[i].file})
+                        }
+                      }
+                      const temp = x
+                      temp.beforeFiles = beforeFiles
+                      temp.progressFiles = progressFiles
+                      temp.afterFiles = afterFiles
+                      console.log(temp)
+                      setData(temp);
+                    openModal();
+                  }} hidden={modalIsOpen ? true : false}>
                     <img src={x.after.length > 0 ? x.after[0] : x.before[0]} className="card__image" alt="" />
                     <div className="card__overlay">
                       <div className="card__header">
@@ -130,7 +258,7 @@ const App = (props) => {
           </ul>
         </div>
         <div style={{ textAlign: 'center', marginTop: '4em' }}>
-          <Pagination defaultPageSize={10} />
+          <Pagination defaultPageSize={1} total={projects?.totalPages || 0} onChange={(a) => setPage(a)} />
         </div>
       </div>
     </Styled>
