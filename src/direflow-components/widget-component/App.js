@@ -45,7 +45,8 @@ const App = (props) => {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:9000/api/v1/projects/${props.dataId}?page=${page}&search=${search}&serviceType=${serviceType}`)
+    console.log(serviceType)
+    axios.get(`https://jobshot.app/api/v1/projects/widget/${props.dataId}?page=${page}&search=${search}&serviceType=${JSON.stringify(serviceType)}`)
       .then(function (response) {
         // console.log(response);
         if(response && response.data) {
@@ -77,7 +78,7 @@ const App = (props) => {
           setProjects([])
         }
       })
-      axios.get(`http://localhost:9000/api/v1/users/${props.dataId}`)
+      axios.get(`https://jobshot.app/api/v1/users/${props.dataId}`)
       .then(function (response) {
         if(response.data) {
           const temp = []
