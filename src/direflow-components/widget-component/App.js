@@ -132,7 +132,7 @@ const App = (props) => {
         {
           data && !visibleQuote && <div>
           <div style={{ float: 'right', marginRight: '40px' }}>
-            <img src={closeButton} style={{ width: '40px' }} onClick={() => {
+            <img src="https://jobshot-bucket.s3.us-west-1.amazonaws.com/assets/img_211963.png" style={{ width: '40px' }} onClick={() => {
                 setData(null)
                 setVisibleQuote(false)
                 setVisible(true)
@@ -177,7 +177,7 @@ const App = (props) => {
           visibleQuote &&
           <div>
             <div style={{ float: 'right', marginRight: '40px', marginTop: '20px' }}>
-              <img src={closeButton} style={{ width: '40px' }} onClick={() => {
+              <img src="https://jobshot-bucket.s3.us-west-1.amazonaws.com/assets/img_211963.png" style={{ width: '40px' }} onClick={() => {
                 setVisibleQuote(false)
                 setData(null)
                 setVisible(true)
