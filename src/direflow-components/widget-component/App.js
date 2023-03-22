@@ -12,12 +12,14 @@ const App = (props) => {
   const [projects, setProjects] = useState([])
   const [HasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1)
 
   const test = async () => {
     await axios.get(`https://jobshot.app/api/v1/projects/widget/${props.dataId}?page=${page}`)
     .then(function (response) {
       if(response && response.data) {
         const temp = response.data.data
+        setTotalPage(temp.totalPage)
         const arr = []
         for(let i = 0; i < temp.length; i++) {
           const before = []
@@ -119,7 +121,7 @@ const App = (props) => {
               )
             })
           }
-          {HasMore && (
+          {totalPage !== page && HasMore && (
             <div style={{ width: '100%'}}>
               <button onClick={test} className="button-6" role="button">LOAD MORE</button>
             </div>
