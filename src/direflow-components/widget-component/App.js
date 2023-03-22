@@ -80,7 +80,7 @@ const App = (props) => {
   const [data, setData] = useState(null)
   return (
     <Styled styles={styles}>
-      <div>
+      <div style={{ width: '100%', textAlign: 'center' }}>
         {
           visible && !visibleQuote && <div className="wrapper">
           <div>
