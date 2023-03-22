@@ -19,7 +19,8 @@ const App = (props) => {
     .then(function (response) {
       if(response && response.data) {
         const temp = response.data.data
-        setTotalPage(response.data.totalPage)
+        console.log(response)
+        setTotalPage(response.data.totalPages)
         const arr = []
         for(let i = 0; i < temp.length; i++) {
           const before = []
