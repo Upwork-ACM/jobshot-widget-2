@@ -1,6 +1,5 @@
 import { DireflowComponent } from 'direflow-component';
 import App from './App';
-
 // const component = document.querySelector('widget-component');
 // // console.log('component main', component)
 // const id = component.getAttribute('data-id')
